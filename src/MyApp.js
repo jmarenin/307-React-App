@@ -7,8 +7,14 @@ function MyApp() {
   const [characters, setCharacters] = useState([]);
 
   function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {return i !== index});
-    setCharacters(updated);
+    //const updated = characters.filter((character, i) => {return i !== index});
+    //setCharacters(updated);
+    makeDeleteCall(characters[index]).then(result => {
+      if (result && result.status === 204) {
+        const updated = characters.filter((character, i) => {return i !== index});
+        setCharacters(updated);
+      }
+    })
   }
 
   function updateList(person) {
@@ -40,6 +46,17 @@ function MyApp() {
        return false;
     }
  }
+
+  async function makeDeleteCall(person) {
+    try {
+      const response = await axios.delete('http://localhost:5000/users/' + person.id);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   useEffect(() => {
     fetchAll().then( result => {
